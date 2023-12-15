@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: youchen <youchen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 20:39:23 by youchen           #+#    #+#             */
-/*   Updated: 2023/12/15 15:42:17 by youchen          ###   ########.fr       */
+/*   Updated: 2023/12/15 15:57:45 by youchen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static char	*read_and_process_buffer(int fd, char *left)
 
 char	*get_next_line(int fd)
 {
-	static char	*left = NULL;
+	static char	*left[OPEN_MAX];
 	char		*line;
 	char		*ret;
 
@@ -65,19 +65,19 @@ char	*get_next_line(int fd)
 	ret = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	left = read_and_process_buffer(fd, left);
-	if (!left)
+	left[fd] = read_and_process_buffer(fd, left[fd]);
+	if (!left[fd])
 		return (NULL);
-	if (ft_strchr(left, '\n'))
+	if (ft_strchr(left[fd], '\n'))
 	{
-		line = get_the_line(left);
-		ret = get_left_string(left);
-		return (free(left), left = NULL, left = ret, line);
+		line = get_the_line(left[fd]);
+		ret = get_left_string(left[fd]);
+		return (free(left[fd]), left[fd] = NULL, left[fd] = ret, line);
 	}
-	if (*left)
+	if (*left[fd])
 	{
-		line = ft_strjoin(line, left);
-		return (free(left), left = NULL, line);
+		line = ft_strjoin(line, left[fd]);
+		return (free(left[fd]), left[fd] = NULL, line);
 	}
-	return (free(left), left = NULL, NULL);
+	return (free(left[fd]), left[fd] = NULL, NULL);
 }
